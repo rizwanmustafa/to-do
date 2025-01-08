@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Checkbox from '@mui/material/Checkbox';
 import { SxProps } from '@mui/material';
 
@@ -6,52 +6,46 @@ import { SxProps } from '@mui/material';
 
 // TODO: Use Material UI's list to display the tasks
 
-export interface Task {
-  title: string;
-  completed: boolean;
-};
-
 export interface Props {
-  tasks: Task[];
+  tasks: MyTypes.Task[];
+  setTask: (index: number, newTask: MyTypes.Task) => void;
 }
 
+const completedStyle: React.CSSProperties = {
+  color: 'green',
+  textDecoration: 'line-through',
+  transition: 'all 0.3s ease-in-out',
+};
+
+const checkboxStyle: SxProps = {
+  color: 'green',
+  '&.Mui-checked': {
+    color: 'green',
+  },
+};
+
 export const TaskList = (props: Props): JSX.Element => {
-  const [tasks, setTasks] = useState(props.tasks);
+  const { tasks, setTask } = props;
 
   const handleCheckboxChange = (index: number) => {
-    const newTasks = [...tasks];
-    newTasks[index].completed = !newTasks[index].completed;
-    setTasks(newTasks);
+    const newTask = { ...tasks[index], completed: !tasks[index].completed };
+    setTask(index, newTask);
   };
-
-  const completedStyle: React.CSSProperties = {
-    color: 'green',
-    textDecoration: 'line-through',
-    transition: 'all 0.3s ease-in-out',
-  };
-
-  const checkboxStyle: SxProps= 
-    {
-      color: 'green',
-      '&.Mui-checked': {
-        color: 'green',
-      },
-    }  ;
 
   return (
     <>
       {tasks.map((task, index) => (
-        <div key={index} style={{display: 'flex', alignItems: 'center'}}>
+        <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
           <Checkbox
             checked={task.completed}
             onChange={() => handleCheckboxChange(index)}
             sx={checkboxStyle}
           />
-          <p style={task.completed ? completedStyle : { transition: 'all 0.3s ease-in-out' }}>{task.title}</p>
+          <p style={task.completed ? completedStyle : { transition: 'all 0.3s ease-in-out' }}>{task.description}</p>
         </div>
       ))}
     </>
-  )
+  );
 };
 
 export default TaskList;
